@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>neovim</title>
+      <link href="/neovim/neovim/"/>
+      <url>/neovim/neovim/</url>
+      
+        <content type="html"><![CDATA[<h2 id="Neovim-笔记"><a href="#Neovim-笔记" class="headerlink" title="Neovim 笔记"></a>Neovim 笔记</h2><p>洛谷上的博客渲染有点问题，建议上 <a href="https://ycshome.github.io/neovim/neovim">github</a> 看。</p><ul><li>高级操作 API 操作<ul><li><a href="../nvim-buf/">Neovim与缓冲区</a></li></ul></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> neovim </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> neovim </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>test</title>
       <link href="/uncategorized/test/"/>
       <url>/uncategorized/test/</url>

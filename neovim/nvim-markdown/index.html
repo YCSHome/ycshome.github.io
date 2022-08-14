@@ -16,24 +16,28 @@
   <meta name="author" content="YC">
   <meta name="keywords" content="YC的小窝,YCSHome">
   
-    <meta name="description" content="Neovim的相关文章汇总">
+    <meta name="description" content="在 Neovim&#x2F;Vim 中编写 Markdown">
 <meta property="og:type" content="article">
-<meta property="og:title" content="neovim">
-<meta property="og:url" content="https://ycshome.github.io/neovim/neovim/index.html">
+<meta property="og:title" content="nvim-markdown">
+<meta property="og:url" content="https://ycshome.github.io/neovim/nvim-markdown/index.html">
 <meta property="og:site_name" content="YC的小窝">
-<meta property="og:description" content="Neovim的相关文章汇总">
+<meta property="og:description" content="在 Neovim&#x2F;Vim 中编写 Markdown">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-08-13T04:55:18.000Z">
-<meta property="article:modified_time" content="2022-08-13T05:02:12.609Z">
+<meta property="og:image" content="https://s1.ax1x.com/2022/08/14/vUhWkQ.gif">
+<meta property="og:image" content="https://s1.ax1x.com/2022/08/14/vUzIIA.png">
+<meta property="article:published_time" content="2022-08-14T11:53:08.000Z">
+<meta property="article:modified_time" content="2022-08-14T13:23:57.347Z">
 <meta property="article:author" content="YC">
 <meta property="article:tag" content="neovim">
+<meta property="article:tag" content="markdown">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://s1.ax1x.com/2022/08/14/vUhWkQ.gif">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>neovim - YC的小窝</title>
+  <title>nvim-markdown - YC的小窝</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="neovim"></span>
+            <span id="subtitle" data-typed-text="nvim-markdown"></span>
           
         </div>
 
@@ -209,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-08-13 12:55" pubdate>
-          星期六, 八月 13日 2022, 12:55 下午
+        <time datetime="2022-08-14 19:53" pubdate>
+          星期日, 八月 14日 2022, 7:53 晚上
         </time>
       </span>
     
@@ -222,7 +226,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          51 字
+          2.1k 字
         
       </span>
     
@@ -234,7 +238,7 @@
         
         
           <!-- compatible with older versions-->
-          1 分钟
+          18 分钟
         
       </span>
     
@@ -272,18 +276,53 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">neovim</h1>
+            <h1 style="display: none">nvim-markdown</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="Neovim-笔记"><a href="#Neovim-笔记" class="headerlink" title="Neovim 笔记"></a>Neovim 笔记</h2><p>洛谷上的博客渲染有点问题，建议上 <a href="https://ycshome.github.io/neovim/neovim">github</a> 看。</p>
-<ul>
-<li>高级操作 API 操作<ul>
-<li><a href="../nvim-buf/">Neovim与缓冲区</a></li>
-</ul>
-</li>
-</ul>
+                <h2 id="在-Neovim-x2F-Vim-中编写-Markdown"><a href="#在-Neovim-x2F-Vim-中编写-Markdown" class="headerlink" title="在 Neovim&#x2F;Vim 中编写 Markdown"></a>在 Neovim&#x2F;Vim 中编写 Markdown</h2><p>在以前我们曾经拥有过一个非常完美的插件：<a target="_blank" rel="noopener" href="https://github.com/iamcco/markdown-preview.nvim">iamcco&#x2F;markdown-preview.nvim</a>。这是一个非常好的插件，它在很大程度上满足了我们的要求。</p>
+<p>但是它任然有一些非常致命的缺点，比如说无法利用第三方转换工具 <code>pandoc</code> 以及自定义主题和高亮格式的方法与一般的工具不一样。对于一个颜控来说无法自定义主题其实是非常难受的一件事。</p>
+<p>在逛 <code>Reddit</code> 论坛时我无意间了解到了一个叫 <a target="_blank" rel="noopener" href="https://github.com/euclio/vim-markdown-composer">markdown-composer</a> 的插件。它是为数不多可以异步渲染、同时还可以利用第三方渲染工具的插件。不过美中不足的就是它无法 <strong>同步滚动</strong> 这可能是这个插件最致命的缺点了。实际上，<a target="_blank" rel="noopener" href="https://github.com/euclio/vim-markdown-composer/issues/34">同步滚动的要求</a> 18 年就有人提出来了，由于插件原理的原因到现在还没有实现。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>由于它是用 Rust 编写的，所以你需要使用 <code>cargo</code> 来编译。你需要先安装好相关的 Rust 工具包：<a target="_blank" rel="noopener" href="https://www.rust-lang.org/zh-CN/tools/install">Rust 安装指南</a></p>
+<p>然后使用你自己喜欢的插件管理器安装插件吧。</p>
+<h4 id="vim-plug"><a href="#vim-plug" class="headerlink" title="vim-plug"></a>vim-plug</h4><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">function!</span> <span class="hljs-title">BuildComposer</span><span class="hljs-params">(info)</span><br>  <span class="hljs-keyword">if</span> <span class="hljs-variable">a:info</span>.status != <span class="hljs-string">&#x27;unchanged&#x27;</span> || <span class="hljs-variable">a:info</span>.force<br>    <span class="hljs-keyword">if</span> <span class="hljs-built_in">has</span>(<span class="hljs-string">&#x27;nvim&#x27;</span>)<br>      !cargo build --release --locked<br>    <span class="hljs-keyword">else</span><br>      !cargo build --release --locked --<span class="hljs-keyword">no</span>-default-features --features json-rpc<br>    <span class="hljs-keyword">endif</span><br>  <span class="hljs-keyword">endif</span><br><span class="hljs-keyword">endfunction</span><br><br>Plug <span class="hljs-string">&#x27;euclio/vim-markdown-composer&#x27;</span>, &#123; <span class="hljs-string">&#x27;do&#x27;</span>: <span class="hljs-keyword">function</span>(<span class="hljs-string">&#x27;BuildComposer&#x27;</span>) &#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="Vundle"><a href="#Vundle" class="headerlink" title="Vundle"></a>Vundle</h4><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim">Plugin <span class="hljs-string">&#x27;euclio/vim-markdown-composer&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>不过在这之后你需要手动编译一遍：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># cd 到你的插件目录，再执行接下来的操作</span><br><span class="hljs-comment"># 如果你是 Vim 用户</span><br>cargo build --release --no-default-features --features json-rpc<br><span class="hljs-comment"># 如果你是 Neovim 用户</span><br>cargo build --release<br></code></pre></td></tr></table></figure>
+
+<h4 id="Dein-vim"><a href="#Dein-vim" class="headerlink" title="Dein.vim"></a>Dein.vim</h4><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">call</span> dein#add(<span class="hljs-string">&#x27;euclio/vim-markdown-composer&#x27;</span>, &#123; <span class="hljs-string">&#x27;build&#x27;</span>: <span class="hljs-string">&#x27;cargo build --release&#x27;</span> &#125;)<br></code></pre></td></tr></table></figure>
+
+<h4 id="Packer-nvim"><a href="#Packer-nvim" class="headerlink" title="Packer.nvim"></a>Packer.nvim</h4><p>官方其实并没有给出用 Packer 安装的方法……下面这段代码其实是我琢磨出来的</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs lua">use &#123;<br>  <span class="hljs-string">&quot;euclio/vim-markdown-composer&quot;</span>,<br>  run = <span class="hljs-string">&quot;cargo build --release&quot;</span>,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="开始使用"><a href="#开始使用" class="headerlink" title="开始使用"></a>开始使用</h3><p>然后你就可以简单地进行编写了……</p>
+<p><img src="https://s1.ax1x.com/2022/08/14/vUhWkQ.gif" srcset="/img/loading.gif" lazyload></p>
+<p>非常简单，不是吗？简洁而迅速，是我最喜欢这个插件的地方。</p>
+<p>这个插件默认采用的渲染器是 CommonMark，支持最基本的语法和 Katex，如果不需要拓展语法其实完全够用了。如果你需要指定渲染器，比如 Pandoc，那么你只需要指定 <code>g:markdown_composer_external_renderer</code>。不过插件要求的渲染器必须从 <code>stdin</code> 中读入文件并且从 <code>stdout</code> 中输出转换后的结果。</p>
+<p>下面给出将渲染器指定为 <code>pandoc</code> 示例：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">let</span> <span class="hljs-variable">g:markdown_composer_external_renderer</span>=<span class="hljs-string">&#x27;pandoc -f markdown -t html&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>在 lua 中，可以这么写：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">vim.g.markdown_composer_external_renderer = <span class="hljs-string">&#x27;pandoc -f markdown -t html&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>插件默认的代码高亮是与 github 的一样，不过可以指定渲染出来后代码的高亮格式。比如：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">let</span> <span class="hljs-variable">g:markdown_composer_syntax_theme</span> = <span class="hljs-string">&#x27;atom-one-dark&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>在 lua 中，可以这么写：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">vim.g.markdown_composer_syntax_theme = <span class="hljs-string">&#x27;atom-one-dark&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>对比图：左 github，右 atom-one-dark</p>
+<p><img src="https://s1.ax1x.com/2022/08/14/vUzIIA.png" srcset="/img/loading.gif" lazyload alt="vUzIIA.png"></p>
+<p>所有高亮格式的预览你都可以在这个网址里看到：<a target="_blank" rel="noopener" href="https://highlightjs.org/static/demo/">网址</a></p>
+<p><code>markdown_composer_syntax_theme</code> 所需要的值都可以在 <a target="_blank" rel="noopener" href="https://github.com/isagalaev/highlight.js/tree/master/src/styles">这里</a> 找到（不要把进去 <code>.css</code> 写进去）</p>
+<p>插件不仅可以指定代码高亮的格式，还可以指定 markdown 整体的一个主题而不是默认的白色。不过这个会相对麻烦一点点。</p>
+<p>如果你需要指定相应的主题，你需要提供 css 文件的 url 地址。不过必须是一个指向本地文件的 <code>file</code> url 而不能是 http 或者 http。</p>
+<p>比如我在 <code>/theme</code> 文件夹中有一个 <code>dracula.css</code> 文件是我想要的主题样式，此时我们可以这么写：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim"><br></code></pre></td></tr></table></figure>
+<p><code>/theme/dracula.css</code></p>
 
                 
               </div>
@@ -319,6 +358,8 @@
       
         <a href="/tags/neovim/">#neovim</a>
       
+        <a href="/tags/markdown/">#markdown</a>
+      
     </div>
   
 </div>
@@ -329,8 +370,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>neovim</div>
-      <div>https://ycshome.github.io/neovim/neovim/</div>
+      <div>nvim-markdown</div>
+      <div>https://ycshome.github.io/neovim/nvim-markdown/</div>
     </div>
     <div class="license-meta">
       
@@ -342,7 +383,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年8月13日</div>
+          <div>2022年8月14日</div>
         </div>
       
       
@@ -372,9 +413,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/neovim/nvim-markdown/" title="nvim-markdown">
+                      <a href="/Cataclysm-Days-Ahead/CataclysmDDA/" title="CataclysmDDA">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">nvim-markdown</span>
+                        <span class="hidden-mobile">CataclysmDDA</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -382,8 +423,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/uncategorized/test/" title="test">
-                        <span class="hidden-mobile">test</span>
+                      <a href="/neovim/neovim/" title="neovim">
+                        <span class="hidden-mobile">neovim</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

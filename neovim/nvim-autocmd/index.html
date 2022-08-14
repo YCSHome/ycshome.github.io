@@ -1,0 +1,707 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="YC">
+  <meta name="keywords" content="YC的小窝,YCSHome">
+  
+    <meta name="description" content="对neovim与autocmd的简单讨论">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Neovim&#x2F;Vim 与它的 autocmd">
+<meta property="og:url" content="https://ycshome.github.io/neovim/nvim-autocmd/index.html">
+<meta property="og:site_name" content="YC的小窝">
+<meta property="og:description" content="对neovim与autocmd的简单讨论">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-12T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-08-14T04:40:10.113Z">
+<meta property="article:author" content="YC">
+<meta property="article:tag" content="neovim">
+<meta property="article:tag" content="vim">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Neovim/Vim 与它的 autocmd - YC的小窝</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"ycshome.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>YCSHome</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Neovim/Vim 与它的 autocmd"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-08-13 00:00" pubdate>
+          星期六, 八月 13日 2022, 12:00 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          2.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          24 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Neovim/Vim 与它的 autocmd</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="Neovim-x2F-Vim-和它的-autocmd"><a href="#Neovim-x2F-Vim-和它的-autocmd" class="headerlink" title="Neovim&#x2F;Vim 和它的 autocmd"></a>Neovim&#x2F;Vim 和它的 autocmd</h2><h3 id="从-vim-开始谈起"><a href="#从-vim-开始谈起" class="headerlink" title="从 vim 开始谈起"></a>从 vim 开始谈起</h3><p>autocmd 是 vim 中一个非常实用的东西。autocmd即自动命令，指当满足一定条件下会自动触发的事件。在 vim 中我们可以实用 <code>autocmd</code> 这个简单的命令来进行定义。</p>
+<p>如果您对 autocmd 足够了解，只是想知道在 Neovim 里的 API，可以直接跳过这一部分。</p>
+<p>如果你想要创建一个新的自动命令，只需要使用如下命令：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">autocmd</span> [group] &#123;event&#125; &#123;aupat&#125; [++once] [++nested] &#123;cmd&#125;<br></code></pre></td></tr></table></figure>
+
+<p>其中，<code>&#123;...&#125;</code> 对应的参数是必须参数，<code>[...]</code> 对应的参数是可选参数。</p>
+<h4 id="快速入门"><a href="#快速入门" class="headerlink" title="快速入门"></a>快速入门</h4><p>首先我们可以看一个例子：</p>
+<p>在命令模式下输入这段命令</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim">:<span class="hljs-keyword">autocmd</span> BufWrite * <span class="hljs-keyword">sleep</span> <span class="hljs-number">500</span><span class="hljs-keyword">m</span><br></code></pre></td></tr></table></figure>
+
+<p>然后任意保存一个文件……</p>
+<p>你会发现你的 vim 卡了一下，大概半秒。这就是自动命令在搞鬼了。当你保存文件的时候，就相当于触发了一个事件 <code>BufWrite</code>。vim 发现你刚好定义了一个自动命令，这个自动命令要求当触发 <code>BufWrite</code> 事件时、文件名刚好又匹配 <code>*</code>，于是便执行命令 <code>:sleep 500m</code> （即暂停 <code>0.5</code> 秒）</p>
+<p>在这一个自动命令里面，<code>BufWrite</code> 对应的就是 <code>&#123;event&#125;</code>，即触发所需要的时间。<code>*</code> 对应的参数就是 <code>&#123;aupat&#125;</code>，<code>&#123;aupat&#125;</code> 即 <code>autocmd-pattern</code>（自动命令匹配模式），当触发对应事件并且文件名匹配 <code>&#123;aupat&#125;</code> 时，就会执行 <code>&#123;cmd&#125;</code>。</p>
+<p>其中，<code>&#123;cmd&#125;</code> 对应的是一个命令，不过经过我的实践，貌似 <code>&#123;cmd&#125;</code> 并不可以是一个函数，也就是说如果你想通过 <code>autocmd</code> 执行一个 vim 函数必须通过类似 <code>call fn()</code> 的方式调用。</p>
+<h4 id="group"><a href="#group" class="headerlink" title="group"></a>group</h4><p>group ，即自动命令组。可以用来管理多个 autocmd 命令。</p>
+<p>我们有一个用来创建&#x2F;切换自动命令组的命令 <code>augroup</code>，先看一个示例：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">augroup</span> test<br>  <span class="hljs-keyword">autocmd</span> BufWrite * <span class="hljs-keyword">echom</span> <span class="hljs-string">&quot;a&quot;</span><br><span class="hljs-keyword">augroup</span> END<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这里提一嘴关于 vim 命令运行的技巧<br>你可以将上述命令保存到一个文件里面，例如保存到 <code>test.vim</code><br>然后运行 <code>source %</code>，<code>%</code> 意味着当前文件，此时就相当于运行了一遍 vimscript</p>
+</blockquote>
+<p>当你执行上述命令之后，再随意保存一个文件。然后通过 <code>message</code> 来查看相关信息。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs vim">:<span class="hljs-keyword">source</span> test.<span class="hljs-keyword">vim</span><br>:message clear<br>:<span class="hljs-keyword">w</span><br>:message<br><span class="hljs-keyword">a</span><br><span class="hljs-string">&quot;test.vim&quot;</span> <span class="hljs-number">3</span>L, <span class="hljs-number">57</span>B written<br></code></pre></td></tr></table></figure>
+
+<p>如果 message 出来的信息过多影响观感可以用 <code>message clear</code> 清空<br>此时，若你尝试使用 <code>autocmd!</code> 清空掉这条自动命令……</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs vim">:message clear<br>:autocmd!<br>:message clear<br>:<span class="hljs-keyword">w</span><br><span class="hljs-keyword">a</span><br><span class="hljs-string">&quot;test.vim&quot;</span> <span class="hljs-number">3</span>L, <span class="hljs-number">57</span>B written<br></code></pre></td></tr></table></figure>
+
+<p>发现了吗？这条自动命令并没有被清掉。此时我们已经可以大概猜出 <code>group</code> 的作用：用来将自动命令分组。而 <code>augroup</code> 所做的就是 <strong>创建</strong> 并切换自动命令组。其中一个最特别的 <code>augroup end|END</code> 可以回到默认分组。</p>
+<p>对于分组，除了使自动命令的分类更加清晰，还有一个最大的作用：防止同一个自动命令被执行多次。</p>
+<p>在自动命令中，由于 vim 压根不知道你是否要保留哪怕是一模一样的自动命令，所以最简单粗暴的做法就是让每一个自动命令都是独立的。对于以下命令：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">augroup</span> test<br>  <span class="hljs-keyword">autocmd</span> BufWrite * <span class="hljs-keyword">echom</span> <span class="hljs-string">&quot;a&quot;</span><br>  <span class="hljs-keyword">autocmd</span> BufWrite * <span class="hljs-keyword">echom</span> <span class="hljs-string">&quot;a&quot;</span><br>  <span class="hljs-keyword">autocmd</span> BufWrite * <span class="hljs-keyword">echom</span> <span class="hljs-string">&quot;a&quot;</span><br>  <span class="hljs-keyword">autocmd</span> BufWrite * <span class="hljs-keyword">echom</span> <span class="hljs-string">&quot;a&quot;</span><br><span class="hljs-keyword">augroup</span> END<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs vim">:<span class="hljs-keyword">source</span> %<br>:<span class="hljs-keyword">source</span> %<br>:message clear<br>:<span class="hljs-keyword">w</span><br>:message<br><span class="hljs-keyword">a</span><br><span class="hljs-keyword">a</span><br><span class="hljs-keyword">a</span><br><span class="hljs-keyword">a</span><br><span class="hljs-keyword">a</span><br><span class="hljs-keyword">a</span><br><span class="hljs-keyword">a</span><br><span class="hljs-keyword">a</span><br><span class="hljs-string">&quot;test.vim&quot;</span> <span class="hljs-number">6</span>L, <span class="hljs-number">153</span>B written<br></code></pre></td></tr></table></figure>
+
+<p>由于我们执行了两遍 <code>source</code>，导致原本 <code>test</code> 组里的自动命令也翻了一倍。为了解决这种奇怪的问题，我们可以这么做：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">augroup</span> test<br>  autocmd!<br>  <span class="hljs-keyword">autocmd</span> BufWrite * <span class="hljs-keyword">echom</span> <span class="hljs-string">&quot;a&quot;</span><br>  <span class="hljs-keyword">autocmd</span> BufWrite * <span class="hljs-keyword">echom</span> <span class="hljs-string">&quot;a&quot;</span><br>  <span class="hljs-keyword">autocmd</span> BufWrite * <span class="hljs-keyword">echom</span> <span class="hljs-string">&quot;a&quot;</span><br>  <span class="hljs-keyword">autocmd</span> BufWrite * <span class="hljs-keyword">echom</span> <span class="hljs-string">&quot;a&quot;</span><br><span class="hljs-keyword">augroup</span> END<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs vim">:<span class="hljs-keyword">source</span> %<br>:<span class="hljs-keyword">source</span> %<br>:message clear<br>:<span class="hljs-keyword">w</span><br>:message<br><span class="hljs-keyword">a</span><br><span class="hljs-keyword">a</span><br><span class="hljs-keyword">a</span><br><span class="hljs-keyword">a</span><br><span class="hljs-string">&quot;test.vim&quot;</span> <span class="hljs-number">7</span>L, <span class="hljs-number">164</span>B written<br></code></pre></td></tr></table></figure>
+
+<h4 id="event"><a href="#event" class="headerlink" title="event"></a>event</h4><p>event 即事件，每当你执行某些特定动作时会触发一些事件。比如 <code>BufWrite</code> 就是一个最简单的事件：当缓冲区内的文本写入一个文件是。你可以简单理解为当你保存文件的时候。也就是说你可以通过很多个事件，来实现一些非常有趣的功能：比如当你打开一个新文件的时候替你读取一个模板等等。</p>
+<p>注：每一个例子中的细节可能不同情况下不一样</p>
+<ul>
+<li><p><code>BufAdd</code><br>当你创建一个新的缓冲区后将其添加到缓冲区列表时，亦或者是缓冲区列表中的一个缓冲区被重命名。这在编写插件的时候会非常有用。</p>
+<blockquote>
+<p>例子:</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs vim">:<span class="hljs-keyword">autocmd</span> BufAdd * <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;you add/rename a buffer&quot;</span><br>:<span class="hljs-keyword">vs</span> test<br>you <span class="hljs-built_in">add</span>/<span class="hljs-built_in">rename</span> <span class="hljs-keyword">a</span> <span class="hljs-keyword">buffer</span><br></code></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p><code>BufDelete</code><br>当一个缓冲区被删除、或者被重命名之前。  </p>
+<blockquote>
+<p>例子:</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs vim">:<span class="hljs-keyword">autocmd</span> BufDelete * <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;you delete/rename a buffer&quot;</span><br>:<span class="hljs-keyword">ls</span><br>  <span class="hljs-number">1</span> %<span class="hljs-keyword">a</span>   <span class="hljs-string">&quot;[No Name]&quot;</span>                    <span class="hljs-built_in">line</span> <span class="hljs-number">1</span><br>:<span class="hljs-keyword">bdelete</span> <span class="hljs-number">1</span><br>you <span class="hljs-keyword">delete</span>/<span class="hljs-built_in">rename</span> <span class="hljs-keyword">a</span> <span class="hljs-keyword">buffer</span><br></code></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p><code>BufEnter</code><br>当你进入一个缓冲区时。不过会在 <code>BufAdd</code> 和 <code>BufReadPost</code> 之后。</p>
+<blockquote>
+<p>例子:</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs vim">:<span class="hljs-keyword">autocmd</span> BufEnter * <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;BufEnter&quot;</span><br>:<span class="hljs-keyword">vs</span> test<br>BufEnter<br></code></pre></td></tr></table></figure>
+<p>然后输入 <code>&lt;C-W&gt;l</code> 来切换窗口，也会输出 <code>BufEnter</code></p>
+</blockquote>
+</li>
+<li><p><code>BufFilePost</code><br>当你用 <code>:file</code> 或者 <code>saveas</code> 更改光标选择的缓冲区的名字时。</p>
+<blockquote>
+<p>例子:</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs vim">:<span class="hljs-keyword">autocmd</span> BufFilePost * <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;change&quot;</span><br>:fild test<br><span class="hljs-keyword">change</span><br>:<span class="hljs-keyword">saveas</span> test2<br><span class="hljs-keyword">change</span><br></code></pre></td></tr></table></figure></blockquote>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/neovim/" class="category-chain-item">neovim</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/neovim/">#neovim</a>
+      
+        <a href="/tags/vim/">#vim</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Neovim/Vim 与它的 autocmd</div>
+      <div>https://ycshome.github.io/neovim/nvim-autocmd/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>YC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年8月13日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/neovim/nvim-buf/" title="Neovim的缓冲区">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Neovim的缓冲区</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
